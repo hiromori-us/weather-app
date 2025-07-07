@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html> <!-- HTML5であることを宣言 -->
+<html lang="en"> <!-- HTML文書の言語を英語に設定 -->
+
 <head>
-  <meta charset="UTF-8">
-  <title>Weather App</title>
+  <meta charset="UTF-8"> <!-- 文字コードをUTF-8に設定（日本語もOK） -->
+  <title>Weather Checker</title> <!-- ブラウザのタブに表示されるタイトル -->
 </head>
+
 <body>
-  <h1>Hello from GitHub Pages!</h1>
+  <h1>Check Weather</h1> <!-- ページ見出し -->
+
+  <!-- 入力フォーム：緯度・経度・日付 -->
+  <form id="weatherForm">
+    <label>Latitude: <input type="text" id="lat" value="35.6895"></label><br> <!-- 緯度入力（デフォルトは東京） -->
+    <label>Longitude: <input type="text" id="lon" value="139.6917"></label><br> <!-- 経度入力 -->
+    <label>Date: <input type="date" id="date"></label><br> <!-- 日付選択 -->
+    <button type="submit">Get Weather</button> <!-- 送信ボタン -->
+  </form>
+
+  <!-- 結果表示エリア -->
+  <pre id="result"></pre>
+
+  <!-- JavaScriptによる動作部分 -->
+  <script>
+    // フォーム送信時の処理を定義
+    document.getElementById("weatherForm").addEventListener("submit", async (e) => {
+      e.preventDefault(); // ページが再読み込みされるのを防ぐ
+
+      // 入力値を取得
+      const lat = document.getElementById("lat").value;
+      const lon = document.getElementById("lon").value;
+      const date = document.getElementById("date").value;
+
+      // Open-Meteo APIのURLを生成
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
+
+      // APIを呼び出し、JSONデータを取得
+      const res = await fetch(url);
+      const data = await res.json();
+
+      // 取得した気温データを表示
+      const min = data.daily.temperature_2m_min[0];
+      const max = data.daily.temperature_2m_max[0];
+      document.getElementById("result").textContent = `Min: ${min}°C, Max: ${max}°C`;
+    });
+  </script>
 </body>
 </html>
