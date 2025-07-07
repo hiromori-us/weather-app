@@ -1,30 +1,35 @@
-<!DOCTYPE html> <!-- HTML5であることを宣言 -->
+<!DOCTYPE html> <!-- HTML5であることを宣言。必須 -->
 <html lang="en"> <!-- HTML文書の言語を英語に設定 -->
 
-<head>
+<head> <!-- 文字コード・CSS・タイトルなどを規定する -->
   <meta charset="UTF-8"> <!-- 文字コードをUTF-8に設定（日本語もOK） -->
   <title>Weather Checker</title> <!-- ブラウザのタブに表示されるタイトル -->
 </head>
 
-<body>
-  <h1>Check Weather</h1> <!-- ページ見出し -->
+<body> <!-- 表示部分を記載 -->
+  <h1>Check Weather</h1> <!-- h1はページ見出しのタグ -->
 
   <!-- 入力フォーム：緯度・経度・日付 -->
   <form id="weatherForm">
     <label>Latitude: <input type="text" id="lat" value="35.6895"></label><br> <!-- 緯度入力（デフォルトは東京） -->
+    <!-- typeではテキストボックスを指定している -->
     <label>Longitude: <input type="text" id="lon" value="139.6917"></label><br> <!-- 経度入力 -->
     <label>Date: <input type="date" id="date"></label><br> <!-- 日付選択 -->
+    <!-- type=dateでカレンダーから日付を選択できる -->
     <button type="submit">Get Weather</button> <!-- 送信ボタン -->
+    <!-- type=submitでフォームを送信するボタン -->
   </form>
 
   <!-- 結果表示エリア -->
   <pre id="result"></pre>
+  <!-- preタグは整形済テキストをそのままのフォーマット、つまり改行や空白をそのまま表示するためのタグ -->
+
 
   <!-- JavaScriptによる動作部分 -->
   <script>
     // フォーム送信時の処理を定義
     document.getElementById("weatherForm").addEventListener("submit", async (e) => {
-      e.preventDefault(); // ページが再読み込みされるのを防ぐ
+      e.preventDefault(); // 通常フォームを送信するとページがリロードされる。この行でページが再読み込みされるのを防ぐ
 
       // 入力値を取得
       const lat = document.getElementById("lat").value;
@@ -32,11 +37,13 @@
       const date = document.getElementById("date").value;
 
       // Open-Meteo APIのURLを生成
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
+      const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
 
       // APIを呼び出し、JSONデータを取得
       const res = await fetch(url);
+      // fetchでAPIから情報取得。awaitはレスポンスが正常でない場合はエラーを投げる
       const data = await res.json();
+      // resは上の行で取得したデータ。.jsonはJSONデータをJavaScriptオブジェクトに変換
 
       // 取得した気温データを表示
       const min = data.daily.temperature_2m_min[0];
